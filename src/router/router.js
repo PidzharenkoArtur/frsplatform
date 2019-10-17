@@ -1,0 +1,32 @@
+import Vue from 'vue'
+import Router from 'vue-router'
+import Home from '../views/Home'
+
+Vue.use(Router)
+
+export default new Router({
+  mode: 'history',
+  base: process.env.BASE_URL,
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: Home
+    },
+    {
+      path: '/login',
+      name: 'LoginPage',
+      component: () => import('@/views/Auth/LoginPage')
+    },
+    {
+      path: '/registration',
+      name: 'RegistrationPage',
+      component: () => import('@/views/Auth/RegistrationPage')
+    },
+    {
+      path: '/reset',
+      name: 'ResetPage',
+      component: () => import('@/views/Auth/ResetPage')
+    },
+  ]
+})

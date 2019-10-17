@@ -1,4 +1,4 @@
-# artur
+# FRSproject
 
 ## Project setup
 ```
