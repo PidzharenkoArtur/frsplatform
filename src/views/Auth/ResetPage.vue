@@ -1,4 +1,15 @@
 <template>
+    <div>
+    <div class="registration-modal" v-if="dialog">
+        <v-sheet class="text-center" height="150px">
+            <v-btn
+            class="mt-6"
+            color="error"
+            @click="dialog=false"
+            >Закрыть</v-btn>
+            <div class="py-3">{{$t('forms.reset')}}</div>
+        </v-sheet>
+    </div>
     <div class="reset-password">
         <div class="form-block">
             <div class="top-block">
@@ -7,7 +18,7 @@
                     <span>FRee Start platform</span>
                 </div>
             </div>
-            <form>
+            <form @submit.prevent="validateBeforeSubmit">
                 <div class="control has-icon has-icon-right">
                     <input v-model="password" v-validate="'required'" name="password" type="password" :class="{'is-danger': errors.has('password')}" ref="password">
                     <span class="highlight"></span><span class="bar"></span>
@@ -31,14 +42,26 @@
             </form>
         </div>
     </div>
+    </div>
 </template>
 
 <script>
   export default {
     name: 'reset',
-    data(){
+    data() {
       return{
-        password: ''
+        password: '',
+        dialog: false
+      }
+    }, 
+    methods: {
+      validateBeforeSubmit() {
+        this.$validator.validateAll().then((result) => {
+          if (result) {
+            this.dialog = true;
+            return;
+          }
+        });
       }
     }
   }

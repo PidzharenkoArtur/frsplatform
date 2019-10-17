@@ -3,10 +3,10 @@ import App from './App.vue'
 import router from './router/router'
 import store from './store/index'
 import VeeValidate from 'vee-validate';
-import vuetify from './plugins/vuetify'
 import messages from './components/global/message'
 import '@/assets/css/font-awesome.css'
 import VueI18n from 'vue-i18n'
+import vuetify from '@/plugins/vuetify'
 
 Vue.config.productionTip = false
 

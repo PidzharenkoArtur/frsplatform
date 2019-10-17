@@ -1,4 +1,15 @@
 <template>
+    <div>
+    <div class="registration-modal" v-if="dialog">
+        <v-sheet class="text-center" height="150px">
+            <v-btn
+            class="mt-6"
+            color="error"
+            @click="dialog=false"
+            >Закрыть</v-btn>
+            <div class="py-3">{{$t('forms.registerSuccess')}}</div>
+        </v-sheet>
+    </div>
     <div class="registration">
         <div class="form-block">
             <div class="top-block">
@@ -8,29 +19,30 @@
                 </div>
                 <p>{{$t('forms.regLabelForm')}} <span>{{$t('forms.regButton')}}</span></p>
             </div>
-            <form>
+            
+            <form @submit.prevent="validateBeforeSubmit">
                 <div class="control has-icon has-icon-right">
-                    <input id="name" v-model="data.firstName" v-validate="'required|alpha|min:2'" :class="{'input': true, 'is-danger': errors.has('data.firstName') }" type="text" autocomplete="off" required>
+                    <input name="firstname" id="name" v-model="data.firstName" v-validate="'required|alpha|min:2'" :class="{'input': true, 'is-danger': errors.has('data.firstName') }" type="text" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="name">{{$t('forms.name')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="surname" v-model="data.lastName" v-validate="'required|alpha|min:2'" :class="{'input': true, 'is-danger': errors.has('data.lastName') }" type="text" autocomplete="off" required>
+                    <input name="surname" id="surname" v-model="data.lastName" v-validate="'required|alpha|min:2'" :class="{'input': true, 'is-danger': errors.has('data.lastName') }" type="text" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="surname">{{$t('forms.surname')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="birthday" v-model="data.birthDate" v-validate="'required|min:2'" :class="{'input': true, 'is-danger': errors.has('data.birthDate') }" type="date" autocomplete="off">
+                    <input name="birthday" id="birthday" v-model="data.birthDate" v-validate="'required|min:2'" :class="{'input': true, 'is-danger': errors.has('data.birthDate') }" type="date" autocomplete="off">
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="birthday">{{$t('forms.birthday')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="phone" v-model="data.phoneNumber" v-validate="'required|min:2'" :class="{'input': true, 'is-danger': errors.has('data.phoneNumber') }" type="tel" pattern="\+[0-9]{12}" autocomplete="off" required>
+                    <input id="phone" name="phone" v-model="data.phoneNumber" v-validate="{ required: true, regex: /\+[0-9]{12}/ }" :class="{'input': true, 'is-danger': errors.has('data.phoneNumber') }" type="tel" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="phone">{{$t('forms.phone')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="login" v-model="data.email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('data.email') }" type="email" autocomplete="off" required>
+                    <input id="login" name="email" v-model="data.email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('data.email') }" type="email" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="login">Email</label>
                 </div>
@@ -50,6 +62,13 @@
                                 <li v-for="error in group">{{ error }}</li>
                             </ul>
                         </li>
+                        <li v-if="errors.has('phone')">
+                            <ul>
+                                <li>
+                                    {{"The format of the phone field is correctd +XXXXXXXXXXXX"}}
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                     <button class="button login-btn" type="submit">{{$t('forms.regButton')}}</button>
                     <div class="no-account">{{$t('forms.privacyLabel')}} <router-link to="/">{{$t('forms.privacyPolicy')}}</router-link></div>
@@ -62,13 +81,12 @@
             </form>
         </div>
     </div>
+    </div>
 </template>
 
 <script>
-    import earth from '../../components/global/earth'
   export default {
-    name: 'registration',
-    components: {earth},
+    name: 'RegistrationPage',
     data(){
       return{
         data: {
@@ -81,9 +99,20 @@
         },
         errorLogin: false,
         errorBackend: '',
-        usa: false
+        usa: false,
+        dialog: false,
       }
     },
+    methods: {
+      validateBeforeSubmit() {
+        this.$validator.validateAll().then((result) => {
+          if (result) {
+            this.dialog = true;
+            return;
+          }
+        });
+      }
+    }
   }
 </script>
 

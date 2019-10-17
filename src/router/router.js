@@ -28,5 +28,10 @@ export default new Router({
       name: 'ResetPage',
       component: () => import('@/views/Auth/ResetPage')
     },
+    {
+      path: '/me',
+      name: 'MePage',
+      component: () => import('@/views/MePage')
+    },
   ]
 })

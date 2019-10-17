@@ -26,7 +26,7 @@
                             <input type="checkbox" class="option-input checkbox" checked="checked" v-model="check" />
                             <span>{{$t('forms.remember')}}</span>
                         </label>
-                    <a class="lost-password">{{$t('forms.lostPass')}}</a>
+                    <router-link class="lost-password" to="reset">{{$t('forms.lostPass')}}</router-link>
                     <ul class="alert clearfix" v-if="errors.items.length !== 0">
                         <li v-for="group in errors.collect()">
                             <ul>
