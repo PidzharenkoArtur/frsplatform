@@ -1,8 +1,8 @@
-"use strict";
+'use strict'
 
-var GK = GK || {};
-GK.BigQuakeDrawable = function(){
-    var vertex = `
+var GK = GK || {}
+GK.BigQuakeDrawable = function () {
+  var vertex = `
         attribute vec3 aPosition;
 
         uniform mat4 uMVMatrix;
@@ -31,9 +31,9 @@ GK.BigQuakeDrawable = function(){
             gl_PointSize = uPointSize;
             gl_Position = uPMatrix * uMVMatrix * vec4(pos, 1.0);
         }
-    `;
+    `
 
-    var fragment = `
+  var fragment = `
         precision highp float;
 
         varying float vAlpha;
@@ -62,66 +62,66 @@ GK.BigQuakeDrawable = function(){
             vec4 color = texture2D(uSampler, coord);
             gl_FragColor = vec4(color.rgb, color.a * uAlpha * vAlpha);
         }
-    `;
+    `
 
-    var self = this;
+  var self = this
 
-    var texture;
-    var vertices;
-    var arrayBuffer;
+  var texture
+  var vertices
+  var arrayBuffer
 
-    // WebGL
-    var geometryLoaded = false;
-    this.modelMatrix = mat4.create();
-    mat4.identity(this.modelMatrix);
+  // WebGL
+  var geometryLoaded = false
+  this.modelMatrix = mat4.create()
+  mat4.identity(this.modelMatrix)
 
-    this.alpha = 1.0;
-    this.pointSize = 12.0;
-    this.progress = 1.0;
-    this.shaderSpeed = 0.01;
+  this.alpha = 1.0
+  this.pointSize = 12.0
+  this.progress = 1.0
+  this.shaderSpeed = 0.01
 
-    this.init = function() {
-        this.program = GK.ProgramManager.create(vertex, fragment);
-        texture = GK.TextureManager.loadTexture("bq.png", true, gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE);
-        return this;
+  this.init = function () {
+    this.program = GK.ProgramManager.create(vertex, fragment)
+    texture = GK.TextureManager.loadTexture('bq.png', true, gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE)
+    return this
+  }
+
+  this.createGeometry = function (earthquake) {
+    vertices = new Float32Array(earthquake.pos)
+
+    if (arrayBuffer == null) {
+      arrayBuffer = gl.createBuffer()
     }
 
-    this.createGeometry = function(earthquake) {
-        vertices = new Float32Array(earthquake.pos);
+    gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer)
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW)
 
-        if (arrayBuffer == null) {
-            arrayBuffer = gl.createBuffer();
-        }
+    geometryLoaded = true
+  }
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+  this.draw = function (camera, time) {
+    if (!texture.loaded) return
+    if (!geometryLoaded) return
 
-        geometryLoaded = true;
-    }
+    gl.useProgram(this.program.name)
 
-    this.draw = function(camera, time){
-        if (!texture.loaded) return;
-        if (!geometryLoaded) return;
+    gl.uniformMatrix4fv(this.program.uniforms.uPMatrix, false, camera.perspectiveMatrix)
+    gl.uniformMatrix4fv(this.program.uniforms.uMVMatrix, false, this.modelMatrix)
+    gl.uniform1f(this.program.uniforms.uTime, time * this.shaderSpeed)
 
-        gl.useProgram(this.program.name);
+    gl.uniform1f(this.program.uniforms.uAlpha, this.alpha)
+    gl.uniform1f(this.program.uniforms.uPointSize, this.pointSize)
+    gl.uniform1f(this.program.uniforms.uProgress, this.progress)
 
-        gl.uniformMatrix4fv(this.program.uniforms.uPMatrix, false, camera.perspectiveMatrix);
-        gl.uniformMatrix4fv(this.program.uniforms.uMVMatrix, false, this.modelMatrix);
-        gl.uniform1f(this.program.uniforms.uTime, time * this.shaderSpeed);
+    gl.activeTexture(gl.TEXTURE0)
+    gl.bindTexture(gl.TEXTURE_2D, texture)
+    gl.uniform1i(this.program.uniforms.uSampler, 0)
 
-        gl.uniform1f(this.program.uniforms.uAlpha, this.alpha);
-        gl.uniform1f(this.program.uniforms.uPointSize, this.pointSize);
-        gl.uniform1f(this.program.uniforms.uProgress, this.progress);
+    gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer)
 
-        gl.activeTexture(gl.TEXTURE0);
-        gl.bindTexture(gl.TEXTURE_2D, texture);
-        gl.uniform1i(this.program.uniforms.uSampler, 0);
+    gl.vertexAttribPointer(this.program.attributes.aPosition, 3, gl.FLOAT, false, 12, 0)
+    gl.enableVertexAttribArray(this.program.attributes.aPosition)
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, arrayBuffer);
-
-        gl.vertexAttribPointer(this.program.attributes.aPosition, 3, gl.FLOAT, false, 12, 0);
-        gl.enableVertexAttribArray(this.program.attributes.aPosition);
-
-        gl.drawArrays(gl.POINTS, 0, vertices.length / 3);
-    }
+    gl.drawArrays(gl.POINTS, 0, vertices.length / 3)
+  }
 }

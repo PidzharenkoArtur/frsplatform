@@ -10,7 +10,7 @@
                 </div>
                 <p>{{$t('forms.labelForm')}}</p>
             </div>
-            <form autocomplete="off">
+            <form autocomplete="off" @submit.prevent="sendForm">
                 <div class="control has-icon has-icon-right">
                         <input name="login" v-model="data.email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('data.email') }" type="email" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
@@ -26,7 +26,7 @@
                             <input type="checkbox" class="option-input checkbox" checked="checked" v-model="check" />
                             <span>{{$t('forms.remember')}}</span>
                         </label>
-                    <router-link class="lost-password" to="reset">{{$t('forms.lostPass')}}</router-link>
+                    <router-link class="lost-password" :to="{ name: ROUTER_NAMES.AUTH.RESET }">{{$t('forms.lostPass')}}</router-link>
                     <ul class="alert clearfix" v-if="errors.items.length !== 0">
                         <li v-for="group in errors.collect()">
                             <ul>
@@ -35,7 +35,7 @@
                         </li>
                     </ul>
                     <button class="button login-btn" type="submit">{{$t('forms.loginBtn')}}</button>
-                    <div class="no-account">{{$t('forms.noAccount')}} <router-link to="registration">{{$t('forms.regLink')}}</router-link></div>
+                    <div class="no-account">{{$t('forms.noAccount')}} <router-link :to="{ name: ROUTER_NAMES.AUTH.REGISTRATION }">{{$t('forms.regLink')}}</router-link></div>
                     <div class="error-block" v-show="errorLogin">
                         {{$t('forms.error')}}
                     </div>
@@ -49,23 +49,36 @@
 </template>
 
 <script>
-  export default {
-    name: 'login',
-    components: {
-    },
-    data() {
-      return{
-        data: {
-          email: '',
-          password: '',
-        },
-        check: false,
-        usa: false,
-        errorLogin: false,
-        reset: false
-      }
+import { mapActions } from 'vuex'
+import { ROUTER_NAMES } from '../../router/routerConstants'
+
+export default {
+  name: 'login',
+  components: {
+  },
+  data () {
+    return {
+      data: {
+        email: '',
+        password: ''
+      },
+      check: false,
+      usa: false,
+      errorLogin: false,
+      reset: false,
+      ROUTER_NAMES: ROUTER_NAMES
+    }
+  },
+  methods: {
+    ...mapActions([
+      'sendLoginForm'
+    ]),
+
+    sendForm () {
+      this.sendLoginForm(this.data)
     }
   }
+}
 </script>
 
 <style scoped lang="scss">

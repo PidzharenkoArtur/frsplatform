@@ -19,8 +19,8 @@
                 </div>
                 <p>{{$t('forms.regLabelForm')}} <span>{{$t('forms.regButton')}}</span></p>
             </div>
-            
-            <form @submit.prevent="validateBeforeSubmit">
+
+            <form @submit.prevent="sendForm">
                 <div class="control has-icon has-icon-right">
                     <input name="firstname" id="name" v-model="data.firstName" v-validate="'required|alpha|min:2'" :class="{'input': true, 'is-danger': errors.has('data.firstName') }" type="text" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
@@ -32,12 +32,12 @@
                     <label for="surname">{{$t('forms.surname')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input name="birthday" id="birthday" v-model="data.birthDate" v-validate="'required|min:2'" :class="{'input': true, 'is-danger': errors.has('data.birthDate') }" type="date" autocomplete="off">
+                    <input name="birthday" id="birthday" v-model="data.birthDate" v-validate="'required|min:8'" :class="{'input': true, 'is-danger': errors.has('data.birthDate') }" type="date" value="2012-06-01" autocomplete="off">
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="birthday">{{$t('forms.birthday')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="phone" name="phone" v-model="data.phoneNumber" v-validate="{ required: true, regex: /\+[0-9]{12}/ }" :class="{'input': true, 'is-danger': errors.has('data.phoneNumber') }" type="tel" autocomplete="off" required>
+                    <input id="phone" name="phone" v-model="data.phoneNumber" v-validate="{ required: true, regex: /\+[0-9]{12}/ }" :class="{'input': true, 'is-danger': errors.has('data.phoneNumber') }" v-mask="'+############'" type="tel" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="phone">{{$t('forms.phone')}}</label>
                 </div>
@@ -47,13 +47,13 @@
                     <label for="login">Email</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="emailRef" v-model="data.ref" :class="{'input': true, 'is-danger': errors.has('data.ref') }" type="text" autocomplete="off" >
+                    <input id="emailRef" v-model="data.ref" :class="{'input': true, 'is-danger': errors.has('data.ref') }" type="text" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="emailRef">{{$t('forms.emailRef')}}</label>
                 </div>
                 <div class="bottom-block">
                     <label class="remember">
-                        <input type="checkbox" class="option-input checkbox" checked="checked" v-model="usa" v-validate="'required|alpha'" required/>
+                        <input type="checkbox" class="option-input checkbox" checked="checked" v-model="data.usa" v-validate="'required|alpha'" required/>
                         <span>{{$t('forms.usa')}}</span>
                     </label>
                     <ul class="alert clearfix" v-if="errors.items.length !== 0">
@@ -65,14 +65,14 @@
                         <li v-if="errors.has('phone')">
                             <ul>
                                 <li>
-                                    {{"The format of the phone field is correctd +XXXXXXXXXXXX"}}
+                                    {{"The phone field is correct +XXXXXXXXXXXX"}}
                                 </li>
                             </ul>
                         </li>
                     </ul>
                     <button class="button login-btn" type="submit">{{$t('forms.regButton')}}</button>
                     <div class="no-account">{{$t('forms.privacyLabel')}} <router-link to="/">{{$t('forms.privacyPolicy')}}</router-link></div>
-                    <div class="no-account">{{$t('forms.hasAccount')}} <router-link to="login">{{$t('forms.loginBtn')}}</router-link></div>
+                    <div class="no-account">{{$t('forms.hasAccount')}} <router-link :to="{ name: ROUTER_NAMES.AUTH.LOGIN }">{{$t('forms.loginBtn')}}</router-link></div>
 
                     <div class="error-block" v-show="errorLogin">
                         <strong>{{errorBackend}}</strong><hr>{{$t('forms.error')}}
@@ -85,41 +85,56 @@
 </template>
 
 <script>
-  export default {
-    name: 'RegistrationPage',
-    data(){
-      return{
-        data: {
-          firstName: '',
-          lastName: '',
-          phoneNumber: '',
-          birthDate: '',
-          email: '',
-          ref: '',
-        },
-        errorLogin: false,
-        errorBackend: '',
-        usa: false,
-        dialog: false,
-      }
+import { mapActions } from 'vuex'
+import { ROUTER_NAMES } from '../../router/routerConstants'
+
+export default {
+  name: 'RegistrationPage',
+  data () {
+    return {
+      data: {
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        birthDate: '',
+        email: '',
+        ref: '',
+        usa: false
+      },
+      errorLogin: false,
+      errorBackend: '',
+
+      dialog: false,
+      ROUTER_NAMES: ROUTER_NAMES
+    }
+  },
+  methods: {
+    ...mapActions([
+      'sendRegistrationForm'
+    ]),
+
+    sendForm () {
+      this.validateBeforeSubmit()
+      this.sendRegistrationForm(this.data)
     },
-    methods: {
-      validateBeforeSubmit() {
-        this.$validator.validateAll().then((result) => {
-          if (result) {
-            this.dialog = true;
-            return;
-          }
-        });
-      }
+
+    validateBeforeSubmit () {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.dialog = true
+        }
+      })
     }
   }
+}
 </script>
 
 <style scoped lang="scss">
     .registration{
         height: 100vh;
         position: relative;
+        margin-bottom: 200px;
+        top: 100px;
         .form-block{
             .alert{
                 margin: 10px 0;

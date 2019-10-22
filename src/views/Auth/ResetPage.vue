@@ -46,25 +46,24 @@
 </template>
 
 <script>
-  export default {
-    name: 'reset',
-    data() {
-      return{
-        password: '',
-        dialog: false
-      }
-    }, 
-    methods: {
-      validateBeforeSubmit() {
-        this.$validator.validateAll().then((result) => {
-          if (result) {
-            this.dialog = true;
-            return;
-          }
-        });
-      }
+export default {
+  name: 'reset',
+  data () {
+    return {
+      password: '',
+      dialog: false
+    }
+  },
+  methods: {
+    validateBeforeSubmit () {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.dialog = true
+        }
+      })
     }
   }
+}
 </script>
 
 <style scoped lang="scss">

@@ -31,18 +31,18 @@
 </template>
 
 <script>
-  export default {
-    name: 'MePage',
-    data() {
-      return{
-      }
-    },
-    methods: {
-      
+export default {
+  name: 'MePage',
+  data () {
+    return {
     }
+  },
+  methods: {
+
   }
+}
 </script>
 
 <style scoped lang="scss">
-    
+
 </style>

@@ -63,9 +63,9 @@
 </template>
 
 <script>
-    export default {
-        name: 'FooterPage',
-    }
+export default {
+  name: 'FooterPage'
+}
 </script>
 
 <style scoped lang="scss">

@@ -15,14 +15,14 @@ import FooterPage from './components/global/FooterPage'
 export default {
   name: 'App',
   data () {
-      return {
-        dialog: false,
-      }
+    return {
+      dialog: false
+    }
   },
   components: {
     Earth,
-    FooterPage,
-  },
+    FooterPage
+  }
 }
 </script>
 
