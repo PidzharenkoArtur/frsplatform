@@ -1,4 +1,13 @@
 <template>
+    <div>
+    <v-sheet v-if="dialog" class="registration-modal text-center" height="150px">
+        <v-btn
+        class="mt-6"
+        color="error"
+        @click="dialog=false"
+        >Закрыть</v-btn>
+        <div class="py-3">{{$t('forms.registerSuccess')}}</div>
+    </v-sheet>
     <div class="registration">
         <div class="form-block">
             <div class="top-block">
@@ -8,52 +17,60 @@
                 </div>
                 <p>{{$t('forms.regLabelForm')}} <span>{{$t('forms.regButton')}}</span></p>
             </div>
-            <form>
+
+            <form @submit.prevent="sendForm">
                 <div class="control has-icon has-icon-right">
-                    <input id="name" v-model="data.firstName" v-validate="'required|alpha|min:2'" :class="{'input': true, 'is-danger': errors.has('data.firstName') }" type="text" autocomplete="off" required>
+                    <input name="firstname" id="name" v-model="data.firstName" v-validate="'required|alpha|min:2'" :class="{'input': true, 'is-danger': errors.has('data.firstName') }" type="text" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="name">{{$t('forms.name')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="surname" v-model="data.lastName" v-validate="'required|alpha|min:2'" :class="{'input': true, 'is-danger': errors.has('data.lastName') }" type="text" autocomplete="off" required>
+                    <input name="surname" id="surname" v-model="data.lastName" v-validate="'required|alpha|min:2'" :class="{'input': true, 'is-danger': errors.has('data.lastName') }" type="text" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="surname">{{$t('forms.surname')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="birthday" v-model="data.birthDate" v-validate="'required|min:2'" :class="{'input': true, 'is-danger': errors.has('data.birthDate') }" type="date" autocomplete="off">
+                    <input name="birthday" id="birthday" v-model="data.birthDate" v-validate="'required|min:8'" :class="{'input': true, 'is-danger': errors.has('data.birthDate') }" type="date" value="2012-06-01" autocomplete="off">
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="birthday">{{$t('forms.birthday')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="phone" v-model="data.phoneNumber" v-validate="'required|min:2'" :class="{'input': true, 'is-danger': errors.has('data.phoneNumber') }" type="tel" pattern="\+[0-9]{12}" autocomplete="off" required>
+                    <input id="phone" name="phone" v-model="data.phoneNumber" v-validate="{ required: true, regex: /\+[0-9]{12}/ }" :class="{'input': true, 'is-danger': errors.has('data.phoneNumber') }" v-mask="'+############'" type="tel" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="phone">{{$t('forms.phone')}}</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="login" v-model="data.email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('data.email') }" type="email" autocomplete="off" required>
+                    <input id="login" name="email" v-model="data.email" v-validate="{ required: true, regex: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/ }" :class="{'input': true, 'is-danger': errors.has('data.email') }" type="email" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="login">Email</label>
                 </div>
                 <div class="control has-icon has-icon-right">
-                    <input id="emailRef" v-model="data.ref" :class="{'input': true, 'is-danger': errors.has('data.ref') }" type="text" autocomplete="off" >
+                    <input id="emailRef" name="referral" v-model="data.ref" v-validate="{ required: false, regex: /^\s*$|[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$|[0-9]|[0-9]+/}" :class="{'input': true, 'is-danger': errors.has('data.ref') }" type="text" autocomplete="off">
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="emailRef">{{$t('forms.emailRef')}}</label>
                 </div>
                 <div class="bottom-block">
                     <label class="remember">
-                        <input type="checkbox" class="option-input checkbox" checked="checked" v-model="usa" v-validate="'required|alpha'" required/>
+                        <input type="checkbox" class="option-input checkbox" checked="checked" v-model="data.usa" v-validate="'required|alpha'" required/>
                         <span>{{$t('forms.usa')}}</span>
                     </label>
                     <ul class="alert clearfix" v-if="errors.items.length !== 0">
-                        <li v-for="group in errors.collect()">
+                        <li v-for="(group, index) in errors.collect()" :key="index">
                             <ul>
-                                <li v-for="error in group">{{ error }}</li>
+                                <li v-for="(error, index) in group" :key="index">{{ error }}</li>
+                            </ul>
+                        </li>
+                        <li v-if="errors.has('phone')">
+                            <ul>
+                                <li>
+                                    {{"The phone field is correct +XXXXXXXXXXXX"}}
+                                </li>
                             </ul>
                         </li>
                     </ul>
-                    <button class="button login-btn" type="submit">{{$t('forms.regButton')}}</button>
+                    <v-btn class="button login-btn" type="submit">{{$t('forms.regButton')}}</v-btn>
                     <div class="no-account">{{$t('forms.privacyLabel')}} <router-link to="/">{{$t('forms.privacyPolicy')}}</router-link></div>
-                    <div class="no-account">{{$t('forms.hasAccount')}} <router-link to="login">{{$t('forms.loginBtn')}}</router-link></div>
+                    <div class="no-account">{{$t('forms.hasAccount')}} <router-link :to="{ name: ROUTER_NAMES.AUTH.LOGIN }">{{$t('forms.loginBtn')}}</router-link></div>
 
                     <div class="error-block" v-show="errorLogin">
                         <strong>{{errorBackend}}</strong><hr>{{$t('forms.error')}}
@@ -62,35 +79,60 @@
             </form>
         </div>
     </div>
+    </div>
 </template>
 
 <script>
-    import earth from '../../components/global/earth'
-  export default {
-    name: 'registration',
-    components: {earth},
-    data(){
-      return{
-        data: {
-          firstName: '',
-          lastName: '',
-          phoneNumber: '',
-          birthDate: '',
-          email: '',
-          ref: '',
-        },
-        errorLogin: false,
-        errorBackend: '',
+import { mapActions } from 'vuex'
+import { ROUTER_NAMES } from '../../router/routerConstants'
+
+export default {
+  name: 'RegistrationPage',
+  data () {
+    return {
+      data: {
+        firstName: '',
+        lastName: '',
+        phoneNumber: '',
+        birthDate: '',
+        email: '',
+        ref: '',
         usa: false
-      }
+      },
+      errorLogin: false,
+      errorBackend: '',
+
+      dialog: false,
+      ROUTER_NAMES: ROUTER_NAMES
+    }
+  },
+  methods: {
+    ...mapActions([
+      'sendRegistrationForm'
+    ]),
+
+    sendForm () {
+      this.validateBeforeSubmit()
+      this.sendRegistrationForm(this.data)
     },
+
+    validateBeforeSubmit () {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.dialog = true
+        }
+      })
+    }
   }
+}
 </script>
 
 <style scoped lang="scss">
     .registration{
         height: 100vh;
         position: relative;
+        margin-bottom: 200px;
+        top: 100px;
         .form-block{
             .alert{
                 margin: 10px 0;
@@ -227,9 +269,6 @@
                     background: #f89428;
                     width: 100%;
                     margin: 15px 0;
-                    &:hover{
-                        opacity: 0.9;
-                    }
                 }
                 .remember{
                     color: #fff;
@@ -315,9 +354,6 @@
                     position: absolute;
                     right: 0;
                     top: 5px;
-                    &:hover{
-                        opacity: 0.9;
-                    }
                 }
                 .no-account{
                     font-size: 12px;

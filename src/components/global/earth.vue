@@ -6,14 +6,13 @@
 
 </template>
 <script>
-  export default {
-    name: 'earth',
-    mounted() {
-      TheGlobe.init()
-      TheGlobe.fontsDidActivate();
-
-    }
+export default {
+  name: 'earth',
+  mounted () {
+    TheGlobe.init()
+    TheGlobe.fontsDidActivate()
   }
+}
 </script>
 
 <style scoped lang="scss">

@@ -1,4 +1,15 @@
 <template>
+    <div>
+    <div class="registration-modal" v-if="dialog">
+        <v-sheet class="text-center" height="150px">
+            <v-btn
+            class="mt-6"
+            color="error"
+            @click="dialog=false"
+            >Закрыть</v-btn>
+            <div class="py-3">{{$t('forms.reset')}}</div>
+        </v-sheet>
+    </div>
     <div class="reset-password">
         <div class="form-block">
             <div class="top-block">
@@ -7,7 +18,7 @@
                     <span>FRee Start platform</span>
                 </div>
             </div>
-            <form>
+            <form @submit.prevent="validateBeforeSubmit">
                 <div class="control has-icon has-icon-right">
                     <input v-model="password" v-validate="'required'" name="password" type="password" :class="{'is-danger': errors.has('password')}" ref="password">
                     <span class="highlight"></span><span class="bar"></span>
@@ -20,28 +31,39 @@
                 </div>
                 <div class="bottom-block">
                     <ul class="alert clearfix" v-if="errors.items.length !== 0">
-                        <li v-for="group in errors.collect()">
+                        <li v-for="(group, index) in errors.collect()" :key="index">
                             <ul>
-                                <li v-for="error in group">{{ error }}</li>
+                                <li v-for="(error, index) in group" :key="index">{{ error }}</li>
                             </ul>
                         </li>
                     </ul>
-                    <button class="button login-btn" type="submit">{{$t('forms.resetBtn')}}</button>
+                    <v-btn class="button login-btn" type="submit">{{$t('forms.resetBtn')}}</v-btn>
                 </div>
             </form>
         </div>
     </div>
+    </div>
 </template>
 
 <script>
-  export default {
-    name: 'reset',
-    data(){
-      return{
-        password: ''
-      }
+export default {
+  name: 'reset',
+  data () {
+    return {
+      password: '',
+      dialog: false
+    }
+  },
+  methods: {
+    validateBeforeSubmit () {
+      this.$validator.validateAll().then((result) => {
+        if (result) {
+          this.dialog = true
+        }
+      })
     }
   }
+}
 </script>
 
 <style scoped lang="scss">
@@ -175,9 +197,6 @@
                     background: #f89428;
                     width: 100%;
                     margin: 15px 0;
-                    &:hover{
-                        opacity: 0.9;
-                    }
                 }
                 .remember{
                     color: #fff;
@@ -263,9 +282,6 @@
                     position: absolute;
                     right: 0;
                     top: 5px;
-                    &:hover{
-                        opacity: 0.9;
-                    }
                 }
                 .no-account{
                     font-size: 12px;

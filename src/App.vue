@@ -1,8 +1,10 @@
 <template>
-  <div>
-    <earth/>
-    <router-view/>
-    <footer-page/>
+  <div id="app">
+    <v-app>
+      <earth/>
+      <router-view/>
+      <footer-page/>
+    </v-app>
   </div>
 </template>
 
@@ -12,15 +14,25 @@ import FooterPage from './components/global/FooterPage'
 
 export default {
   name: 'App',
+  data () {
+    return {
+      dialog: false
+    }
+  },
   components: {
     Earth,
-    FooterPage,
-  },
+    FooterPage
+  }
 }
 </script>
 
 <style>
   body {
     font-family: Roboto, Helvetica, Arial,sans-serif;
+  }
+  .registration-modal, .login-modal {
+    z-index: 1000;
+    position: fixed;
+    width: 100%;
   }
 </style>

@@ -1,59 +1,55 @@
-"use strict";
+'use strict'
 
-var GK = GK || {};
+var GK = GK || {}
 
-GK.LatLng = function(latitude, longitude) {
-    this.latitude = latitude;
-    this.longitude = longitude;
+GK.LatLng = function (latitude, longitude) {
+  this.latitude = latitude
+  this.longitude = longitude
 }
 
-GK.LatLng.radiansForPosition = function(x, z) {
-    if (z > 0) {
-        if (x >= 0) {
-            return Math.atan(x / z);
-        }
-        else {
-            return 2 * Math.PI + Math.atan(x / z);
-        }
+GK.LatLng.radiansForPosition = function (x, z) {
+  if (z > 0) {
+    if (x >= 0) {
+      return Math.atan(x / z)
+    } else {
+      return 2 * Math.PI + Math.atan(x / z)
     }
-    else if (z < 0) {
-        return Math.PI + Math.atan(x / z);
+  } else if (z < 0) {
+    return Math.PI + Math.atan(x / z)
+  } else {
+    if (x > 0) {
+      return Math.PI / 2.0
+    } else {
+      return 3 * Math.PI / 2.0
     }
-    else {
-        if (x > 0) {
-            return Math.PI / 2.0;
-        }
-        else {
-            return 3 * Math.PI / 2.0;
-        }
-    }
+  }
 }
 
-GK.LatLng.toWorld = function(latLng) {
-    var latRad = latLng.latitude * Math.PI / 180.0;
-    var lngRad = latLng.longitude * Math.PI / 180.0;
+GK.LatLng.toWorld = function (latLng) {
+  var latRad = latLng.latitude * Math.PI / 180.0
+  var lngRad = latLng.longitude * Math.PI / 180.0
 
-    var radius = Math.cos(latRad);
-    var y = Math.sin(latRad);
-    var x = Math.sin(lngRad) * radius;
-    var z = Math.cos(lngRad) * radius;
+  var radius = Math.cos(latRad)
+  var y = Math.sin(latRad)
+  var x = Math.sin(lngRad) * radius
+  var z = Math.cos(lngRad) * radius
 
-    return vec3.fromValues(x, y, z);
+  return vec3.fromValues(x, y, z)
 }
 
-GK.LatLng.fromWorld = function(pos) {
-    var normal = vec3.create();
-    vec3.normalize(normal, pos);
+GK.LatLng.fromWorld = function (pos) {
+  var normal = vec3.create()
+  vec3.normalize(normal, pos)
 
-    var latRad = Math.asin(normal.y);
-    var lngRad = radiansForPosition(normal.x, normal.z);
+  var latRad = Math.asin(normal.y)
+  var lngRad = radiansForPosition(normal.x, normal.z)
 
-    var lngDeg = lngRad * 180.0 / Math.PI;
-    while (lngDeg > 180.0) {
-        lngDeg -= 360.0;
-    }
+  var lngDeg = lngRad * 180.0 / Math.PI
+  while (lngDeg > 180.0) {
+    lngDeg -= 360.0
+  }
 
-    return new GK.LatLng(latRad * 180.0 / Math.PI, lngDeg);
+  return new GK.LatLng(latRad * 180.0 / Math.PI, lngDeg)
 }
 
 /*

@@ -1,8 +1,17 @@
 <template>
+    <div>
+    <v-sheet v-if="dialog" class="login-modal text-center" height="150px">
+        <v-btn
+        class="mt-6"
+        color="error"
+        @click="dialog=false"
+        >Закрыть</v-btn>
+        <div class="py-3">{{$t('forms.error2FA')}}</div>
+    </v-sheet>
     <div class="login-page">
         <div class="visible-sm visible-xs bg-amber-50"></div>
         <div class="visible-sm visible-xs bg-amber-50"></div>
-        <div class="form-block">
+        <div v-if="isFormBlock" class="form-block">
             <div class="top-block">
                 <div class="logo-block">
                     <img src="../../assets/img/logo-vector.svg" alt="Logo">
@@ -10,11 +19,11 @@
                 </div>
                 <p>{{$t('forms.labelForm')}}</p>
             </div>
-            <form autocomplete="off">
+            <form autocomplete="off" @submit.prevent="sendForm">
                 <div class="control has-icon has-icon-right">
-                        <input name="login" v-model="data.email" v-validate="'required|email'" :class="{'input': true, 'is-danger': errors.has('data.email') }" type="email" autocomplete="off" required>
+                    <input name="email" v-model="data.email" v-validate="{ required: true, regex: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/ }" :class="{'input': true, 'is-danger': errors.has('data.email') }" type="email" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
-                    <label for="login">Email</label>
+                    <label for="email">Email</label>
                 </div>
                 <div class="control has-icon has-icon-right">
                         <input name="password" v-model="data.password" v-validate="'required|min:6'" :class="{'input': true, 'is-danger': errors.has('data.password') }" type="password" autocomplete="off" required>
@@ -26,16 +35,16 @@
                             <input type="checkbox" class="option-input checkbox" checked="checked" v-model="check" />
                             <span>{{$t('forms.remember')}}</span>
                         </label>
-                    <a class="lost-password">{{$t('forms.lostPass')}}</a>
+                    <router-link class="lost-password" :to="{ name: ROUTER_NAMES.AUTH.RESET }">{{$t('forms.lostPass')}}</router-link>
                     <ul class="alert clearfix" v-if="errors.items.length !== 0">
-                        <li v-for="group in errors.collect()">
+                        <li v-for="(group, index) in errors.collect()" :key="index">
                             <ul>
-                                <li v-for="error in group">{{ error }}</li>
+                                <li v-for="(error, index) in group" :key="index">{{ error }}</li>
                             </ul>
                         </li>
                     </ul>
-                    <button class="button login-btn" type="submit">{{$t('forms.loginBtn')}}</button>
-                    <div class="no-account">{{$t('forms.noAccount')}} <router-link to="registration">{{$t('forms.regLink')}}</router-link></div>
+                    <v-btn class="button login-btn" type="submit">{{$t('forms.loginBtn')}}</v-btn>
+                    <div class="no-account">{{$t('forms.noAccount')}} <router-link :to="{ name: ROUTER_NAMES.AUTH.REGISTRATION }">{{$t('forms.regLink')}}</router-link></div>
                     <div class="error-block" v-show="errorLogin">
                         {{$t('forms.error')}}
                     </div>
@@ -45,27 +54,68 @@
                 </div>
             </form>
         </div>
+        <div v-if="!isFormBlock" class="form-block modal-2FA">
+            <div class="top-block">
+                <div class="logo-block">
+                    <img src="../../assets/img/logo-vector.svg" alt="Logo">
+                    <span>FRee Start platform</span>
+                </div>
+                <p>{{$t('forms.labelForm2FA')}}</p>
+            </div>
+            <form autocomplete="off" @submit.prevent="sendForm2FA">
+                <div class="control has-icon has-icon-right">
+                    <input id="code2FA" name="code" v-model="data.code" v-validate="{ required: false, regex: /1/ }" :class="{'input': true, 'is-danger': errors.has('data.code') }"  type="password" autocomplete="off" required>
+                    <span class="highlight"></span><span class="bar"></span>
+                    <label for="code2FA">{{$t('forms.code2FA')}}</label>
+                </div>
+                <div class="bottom-block">
+                    <v-btn class="button login-btn" type="submit">{{$t('forms.resetBtn')}}</v-btn>
+                </div>
+            </form>
+        </div>
+    </div>
     </div>
 </template>
 
 <script>
-  export default {
-    name: 'login',
-    components: {
+import { mapActions } from 'vuex'
+import { ROUTER_NAMES } from '../../router/routerConstants'
+
+export default {
+  name: 'login',
+  components: {
+  },
+  data () {
+    return {
+      data: {
+        email: '',
+        password: '',
+        code: ''
+      },
+      check: false,
+      usa: false,
+      errorLogin: false,
+      reset: false,
+      isFormBlock: true,
+      dialog: false,
+      ROUTER_NAMES: ROUTER_NAMES
+    }
+  },
+  methods: {
+    ...mapActions([
+      'sendLoginForm'
+    ]),
+
+    sendForm () {
+        this.sendLoginForm(this.data);
+        this.isFormBlock = !this.isFormBlock;
     },
-    data() {
-      return{
-        data: {
-          email: '',
-          password: '',
-        },
-        check: false,
-        usa: false,
-        errorLogin: false,
-        reset: false
-      }
+
+    sendForm2FA () {
+        this.dialog = true;
     }
   }
+}
 </script>
 
 <style scoped lang="scss">
@@ -202,9 +252,6 @@
                     background: #f89428;
                     width: 100%;
                     margin: 15px 0;
-                    &:hover{
-                        opacity: 0.9;
-                    }
                 }
                 .remember{
                     color: #fff;
@@ -290,9 +337,6 @@
                     position: absolute;
                     right: 0;
                     top: 5px;
-                    &:hover{
-                        opacity: 0.9;
-                    }
                 }
                 .no-account{
                     font-size: 12px;
