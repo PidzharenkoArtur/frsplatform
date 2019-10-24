@@ -30,7 +30,8 @@ export default {
   body {
     font-family: Roboto, Helvetica, Arial,sans-serif;
   }
-  .registration-modal, .login-modal {
+  .registration-modal, .login-modal, 
+  .new-password-modal {
     z-index: 1000;
     position: fixed;
     width: 100%;

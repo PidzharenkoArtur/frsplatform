@@ -1,16 +1,19 @@
 <template>
     <div>
-    <div class="new-password-modal" v-if="dialog">
+    <div class="registration-modal" v-if="dialog">
         <v-sheet class="text-center" height="150px">
             <v-btn
             class="mt-6"
-            color="error"
+            color="success"
             @click="dialog=false"
-            >Закрыть</v-btn>
-            <div class="py-3">{{ this.textModal.reset }}</div>
+            :to="{ name: ROUTER_NAMES.AUTH.LOGIN }"
+            >
+            {{ $t('forms.loginPage') }}
+            </v-btn>
+            <div class="py-3">{{ $t('forms.newPassword') }}</div>
         </v-sheet>
     </div>
-    <div class="new-password">
+    <div class="reset-password">
         <div class="form-block">
             <div class="top-block">
                 <div class="logo-block">
@@ -20,9 +23,14 @@
             </div>
             <form @submit.prevent="validateBeforeSubmit">
                 <div class="control has-icon has-icon-right">
-                    <input v-model="data.email" name="email" v-validate="{ required: true, regex: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/ }" type="email" :class="{'is-danger': errors.has('data.email')}" autocomplete="off" required>
+                    <input v-model="data.password" v-validate="'required'" name="password" type="password" :class="{'is-danger': errors.has('password')}" ref="password">
                     <span class="highlight"></span><span class="bar"></span>
-                    <label for="email">{{$t('forms.email')}}</label>
+                    <label for="pass">{{$t('forms.newPass')}}</label>
+                </div>
+                <div class="control has-icon has-icon-right">
+                    <input v-model="data.passwordConfirmation"  v-validate="'required|confirmed:password'" name="password_confirmation" type="password" :class="{'is-danger': errors.has('data.password_confirmation')}" data-vv-as="password">
+                    <span class="highlight"></span><span class="bar"></span>
+                    <label for="confpass">{{$t('forms.confirmPass')}}</label>
                 </div>
                 <div class="bottom-block">
                     <ul class="alert clearfix" v-if="errors.items.length !== 0">
@@ -33,7 +41,6 @@
                         </li>
                     </ul>
                     <v-btn class="button login-btn" type="submit">{{$t('forms.resetBtn')}}</v-btn>
-                    <div class="transition">{{$t('forms.returnToPage')}} <router-link :to="{ name: ROUTER_NAMES.AUTH.LOGIN }">{{$t('forms.loginLink')}}</router-link></div>
                 </div>
             </form>
         </div>
@@ -49,14 +56,12 @@ export default {
   data () {
     return {
         data: {
-            email: ''
-        },
-        textModal: {
-            reset: this.$t('forms.reset'),
-            error: this.$t('forms.technicalError')
+            password: '',
+            passwordConfirmation: ''     
         },
         dialog: false,
         ROUTER_NAMES: ROUTER_NAMES
+
     }
   },
   methods: {
@@ -72,7 +77,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-    .new-password{
+    .reset-password{
         height: 100vh;
         position: relative;
         .form-block{
@@ -202,18 +207,6 @@ export default {
                     background: #f89428;
                     width: 100%;
                     margin: 15px 0;
-                }
-
-                .transition{
-                    font-size: 12px;
-                    color: #fff;
-                    text-align: center;
-                    a{
-                        color: #f89428;
-                        &:hover{
-                            text-decoration: underline;
-                        }
-                    }
                 }
             }
         }

@@ -25,6 +25,14 @@ let router = new Router({
       }
     },
     {
+      path: ROUTER_PATH.AUTH.NEWPASSWORD,
+      name: ROUTER_NAMES.AUTH.NEWPASSWORD,
+      component: () => import('@/views/Auth/' + ROUTER_NAMES.AUTH.NEWPASSWORD),
+      meta: {
+        guest: true
+      }
+    },
+    {
       path: ROUTER_PATH.AUTH.RESET,
       name: ROUTER_NAMES.AUTH.RESET,
       component: () => import('@/views/Auth/' + ROUTER_NAMES.AUTH.RESET),

@@ -2,6 +2,7 @@ const ROUTER_NAMES = {
   AUTH: {
     LOGIN: 'LoginPage',
     REGISTRATION: 'RegistrationPage',
+    NEWPASSWORD: 'NewPasswordPage',
     RESET: 'ResetPage'
   },
 
@@ -14,6 +15,7 @@ const ROUTER_PATH = {
   AUTH: {
     LOGIN: '/login',
     REGISTRATION: '/registration',
+    NEWPASSWORD: '/new-password',
     RESET: '/reset'
   },
 

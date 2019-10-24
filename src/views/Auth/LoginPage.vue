@@ -44,7 +44,7 @@
                         </li>
                     </ul>
                     <v-btn class="button login-btn" type="submit">{{$t('forms.loginBtn')}}</v-btn>
-                    <div class="no-account">{{$t('forms.noAccount')}} <router-link :to="{ name: ROUTER_NAMES.AUTH.REGISTRATION }">{{$t('forms.regLink')}}</router-link></div>
+                    <div class="transition">{{$t('forms.noAccount')}} <router-link :to="{ name: ROUTER_NAMES.AUTH.REGISTRATION }">{{$t('forms.regLink')}}</router-link></div>
                     <div class="error-block" v-show="errorLogin">
                         {{$t('forms.error')}}
                     </div>
@@ -338,7 +338,7 @@ export default {
                     right: 0;
                     top: 5px;
                 }
-                .no-account{
+                .transition{
                     font-size: 12px;
                     color: #fff;
                     text-align: center;
