@@ -7,7 +7,7 @@ export default {
         commit('handleLoginSubmission', response)
       })
       .catch(error => {
-        console.error(error.response)
+        commit('handleLoginSubmission', error)
       })
   },
 

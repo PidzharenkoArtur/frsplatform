@@ -6,10 +6,13 @@ import getters from './getters'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
+    dialog: false
   },
   actions,
   mutations,
   getters
 })
+
+export default store;

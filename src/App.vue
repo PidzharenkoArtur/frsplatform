@@ -1,6 +1,11 @@
 <template>
   <div id="app">
     <v-app>
+      <div class="new-password-modal" v-if="dialog">
+        <v-sheet style="display:flex; align-items:center; justify-content:center" class="text-center" height="150px">
+            <div class="py-15 red--text">{{ "ОШИБКА" }}</div>
+        </v-sheet>
+      </div>
       <earth/>
       <router-view/>
       <footer-page/>
@@ -9,6 +14,7 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex'
 import Earth from './components/global/earth'
 import FooterPage from './components/global/FooterPage'
 
@@ -16,8 +22,12 @@ export default {
   name: 'App',
   data () {
     return {
-      dialog: false
     }
+  },
+  computed: {
+    ...mapState([
+      'dialog'
+    ]),
   },
   components: {
     Earth,

@@ -3,7 +3,7 @@ export default {
     localStorage.setItem('jwt', response)
   },
 
-  handleRegistrationSubmission (state, response) {
-    // localStorage.setItem('jwt',response);
+  switchDialog (state, on) {
+    state.dialog = on;
   }
 }

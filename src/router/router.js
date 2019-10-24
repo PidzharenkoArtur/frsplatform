@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import { ROUTER_NAMES, ROUTER_PATH } from './routerConstants'
+import redirect from './redirect'
 
 Vue.use(Router)
 
@@ -51,21 +52,5 @@ let router = new Router({
   ]
 })
 
-router.beforeEach((to, from, next) => {
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (localStorage.getItem('jwt') === null) {
-      next({
-        path: '/login',
-        params: { nextUrl: to.fullPath }
-      })
-    } else next()
-  } else if (to.matched.some(record => record.meta.guest)) {
-    if (localStorage.getItem('jwt') === null) {
-      next()
-    } else next()
-  } else {
-    next()
-  }
-})
-
+redirect(router)();
 export default router

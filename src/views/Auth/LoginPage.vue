@@ -64,7 +64,7 @@
             </div>
             <form autocomplete="off" @submit.prevent="sendForm2FA">
                 <div class="control has-icon has-icon-right">
-                    <input id="code2FA" name="code" v-model="data.code" v-validate="{ required: false, regex: /1/ }" :class="{'input': true, 'is-danger': errors.has('data.code') }"  type="password" autocomplete="off" required>
+                    <input id="code2FA" name="code" v-model="data.code" v-validate="{ required: false, regex: /1/ }" :class="{'input': true, 'is-danger': errors.has('data.code') }" v-mask="'XXXXXX'" type="password" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="code2FA">{{$t('forms.code2FA')}}</label>
                 </div>
