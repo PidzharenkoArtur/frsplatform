@@ -84,6 +84,8 @@
 
 <script>
 import { mapActions } from 'vuex'
+import axios from 'axios'
+
 import { ROUTER_NAMES } from '../../router/routerConstants'
 
 export default {
@@ -112,8 +114,16 @@ export default {
     ]),
 
     sendForm () {
-      this.validateBeforeSubmit()
-      this.sendRegistrationForm(this.data)
+        let testData  = {
+        "email": "foo@bar.com",
+        "password": "foobarbaz",
+        "firstName": "John",
+        "lastName": "Doe",
+        "dob": "2019-10-24T16:27:30.282Z",
+        "phoneNumber": "+380671234567"
+}
+        this.sendRegistrationForm(testData);
+        this.validateBeforeSubmit();
     },
 
     validateBeforeSubmit () {

@@ -1,6 +1,5 @@
 import store from '@/store/index'
 
-
 function redirect (router) {
 
     let findQuery = (to) => {
@@ -24,7 +23,7 @@ function redirect (router) {
     return () => { 
         router.beforeEach((to, from, next) => {
             let query = findQuery(to);
-            if (!query && localStorage.getItem('jwt') === null) {
+            if (!query && localStorage.getItem('token') === null) {
                 store.commit('switchDialog', true);
             }
             if (!query && to.matched.some(record => record.meta.guest)) {
@@ -33,11 +32,12 @@ function redirect (router) {
             if(to.matched.some(record => record.meta.guest)) {
                 next(); 
             } 
-            if (localStorage.getItem('jwt')) {
+            if (localStorage.getItem('token')) {
                 next(); 
             }
-            if (query && localStorage.getItem('jwt')) {
-                location.href = query.value;
+            if (query && localStorage.getItem('token')) {
+                store.dispatch('getSSOToken1');
+                //location.href = query.value;
                 next(); 
             }
         })

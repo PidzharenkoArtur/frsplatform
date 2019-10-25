@@ -19,7 +19,7 @@
                 </div>
                 <p>{{$t('forms.labelForm')}}</p>
             </div>
-            <form autocomplete="off" @submit.prevent="sendForm">
+            <form autocomplete="off" @submit.prevent="send">
                 <div class="control has-icon has-icon-right">
                     <input name="email" v-model="data.email" v-validate="{ required: true, regex: /[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/ }" :class="{'input': true, 'is-danger': errors.has('data.email') }" type="email" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
@@ -64,7 +64,7 @@
             </div>
             <form autocomplete="off" @submit.prevent="sendForm2FA">
                 <div class="control has-icon has-icon-right">
-                    <input id="code2FA" name="code" v-model="data.code" v-validate="{ required: false, regex: /1/ }" :class="{'input': true, 'is-danger': errors.has('data.code') }" v-mask="'XXXXXX'" type="password" autocomplete="off" required>
+                    <input id="code2FA" name="code" v-model="code" v-validate="{ required: false, regex: /1/ }" :class="{'input': true, 'is-danger': errors.has('code') }" v-mask="'XXXXXX'" type="password" autocomplete="off" required>
                     <span class="highlight"></span><span class="bar"></span>
                     <label for="code2FA">{{$t('forms.code2FA')}}</label>
                 </div>
@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapMutations, mapState } from 'vuex'
 import { ROUTER_NAMES } from '../../router/routerConstants'
 
 export default {
@@ -90,8 +90,9 @@ export default {
       data: {
         email: '',
         password: '',
-        code: ''
+        
       },
+      code: '',
       check: false,
       usa: false,
       errorLogin: false,
@@ -101,13 +102,25 @@ export default {
       ROUTER_NAMES: ROUTER_NAMES
     }
   },
+  computed: {
+    ...mapState([
+        'refreshToken'
+    ])
+  },
   methods: {
     ...mapActions([
-      'sendLoginForm'
+        'sendLoginForm',
+        'sendSSOToken'
+    ]),
+    
+    ...mapMutations([
+        'getRefreshTokenStore'
     ]),
 
-    sendForm () {
+    send () {
         this.sendLoginForm(this.data);
+        this.getRefreshTokenStore();
+        //this.sendSSOToken( {"token": this.refreshToken } );
         this.isFormBlock = !this.isFormBlock;
     },
 

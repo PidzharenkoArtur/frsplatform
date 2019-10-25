@@ -1,5 +1,12 @@
 import axios from 'axios'
 
-export default axios.create({
-  baseURL: 'baseurl'
+const a = axios.create({
+  baseURL: 'https://ng.frsplatform.com',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('token')).accessToken
+  }
+
 })
+
+export default a;
