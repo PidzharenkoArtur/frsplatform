@@ -53,4 +53,5 @@ let router = new Router({
 })
 
 redirect(router)();
+
 export default router

@@ -137,6 +137,7 @@ export default {
 
     sendForm2FA () {
         this.dialog = true;
+
     }
   }
 }
