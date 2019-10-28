@@ -2,16 +2,13 @@ export default {
   //Сохраняем токен в localStorage
   saveToken(state, data) {
     let {user, ...token} = data;
-    localStorage.setItem('token', JSON.stringify(token));
+    console.log(token);
+    localStorage.setItem('accessToken', token.accessToken);
+    localStorage.setItem('refreshToken', token.refreshToken);
   },
 
-  getRefreshTokenStore (state) {
-    if (!localStorage.getItem('token')) {
-      return;
-    }
-
-    let token = JSON.parse(localStorage.getItem('token'));
-    state.refreshToken = token;
+  updateToken(state) {
+    console.log("artir");
   },
 
   switchDialog (state, on) {

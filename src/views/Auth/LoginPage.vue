@@ -78,7 +78,7 @@
 </template>
 
 <script>
-import { mapActions, mapMutations, mapState } from 'vuex'
+import { mapActions, mapMutations, mapState, mapGetters } from 'vuex'
 import { ROUTER_NAMES } from '../../router/routerConstants'
 
 export default {
@@ -103,24 +103,35 @@ export default {
     }
   },
   computed: {
-    ...mapState([
-        'refreshToken'
-    ])
+    //  ...mapState([
+    //      'accessToken',
+    //      'refreshToken'
+    //  ]),
+     ...mapGetters([
+         'accessToken',
+         'refreshToken'
+     ])
   },
   methods: {
     ...mapActions([
         'sendLoginForm',
-        'sendSSOToken'
+        'sendSSOToken',
+        'getSSOToken1',
+        
     ]),
     
     ...mapMutations([
-        'getRefreshTokenStore'
+        //'getAccessTokenStore'
+        // 'getAccessToken',
+        // 'getRefreshToken'
     ]),
 
     send () {
         this.sendLoginForm(this.data);
-        this.getRefreshTokenStore();
-        //this.sendSSOToken( {"token": this.refreshToken } );
+        console.log(this.accessToken);
+                console.log(this.refreshToken);
+
+        this.getSSOToken1();
         this.isFormBlock = !this.isFormBlock;
     },
 

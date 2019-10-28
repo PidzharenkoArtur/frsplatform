@@ -8,7 +8,8 @@ Vue.use(Vuex)
 
 const store = new Vuex.Store({
   state: {
-    refreshToken: '',
+    accessToken: localStorage.getItem('accessToken'),
+    refreshToken: localStorage.getItem('refreshToken'),
     dialog: false
   },
   actions,

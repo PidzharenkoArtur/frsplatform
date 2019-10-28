@@ -1,4 +1,4 @@
-import { getToken, refreshToken, postSSOToken, getSSOToken } from '../api/auth.api'
+import { getToken, postRefreshToken, getMe, getSSOToken } from '../api/auth.api'
 
 export default {
   //Получение токена при аутентификации
@@ -13,38 +13,39 @@ export default {
         console.log(error);
       })
   },
-  //Обновление токена
-  updateToken ({ commit }, data) {
-    refreshToken(data)
+  //Инициализация обновления токена
+  initUpdateToken ({ commit, state }, data) {
+    getMe()
       .then(response => {
         if (response.status === 200) {
-          commit('saveToken', response.data)
-        }
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  },
-
-  //Отправить SSO token
-  sendSSOToken ({ commit }, data) {
-    postSSOToken(data)
-      .then(response => {
-        if (response.status === 200) {
+          console.log("1");
           console.log(response);
         }
       })
       .catch(error => {
+        if (error.response.status === 401) {
+          postRefreshToken(state.refreshToken)
+            .then(response => {
+              if (response.status === 200) {
+                console.log("3");
+                console.log(state.refreshToken);
+              }
+            })
+          console.log("2");
+        }
         console.log(error);
       })
+    //setInterval(()=> {
+      //commit('updateToken');
+    //}, 1000);
   },
 
   //Получить SSO token
   getSSOToken1 ({ commit }) {
-
     getSSOToken()
       .then(response => {
         if (response.status === 200) {
+          console.log("art");
           console.log(response);
         }
       })

@@ -23,7 +23,7 @@ function redirect (router) {
     return () => { 
         router.beforeEach((to, from, next) => {
             let query = findQuery(to);
-            if (!query && localStorage.getItem('token') === null) {
+            if (!query && localStorage.getItem('accessToken') === null) {
                 store.commit('switchDialog', true);
             }
             if (!query && to.matched.some(record => record.meta.guest)) {
@@ -32,11 +32,12 @@ function redirect (router) {
             if(to.matched.some(record => record.meta.guest)) {
                 next(); 
             } 
-            if (localStorage.getItem('token')) {
+            if (localStorage.getItem('accessToken')) {
                 next(); 
             }
-            if (query && localStorage.getItem('token')) {
-                store.dispatch('getSSOToken1');
+            if (query && localStorage.getItem('accessToken')) {
+                store.dispatch('initUpdateToken');
+                //store.dispatch('getSSOToken1');
                 //location.href = query.value;
                 next(); 
             }

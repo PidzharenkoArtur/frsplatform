@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from 'vuex'
+import {mapState} from 'vuex'
 import Earth from './components/global/earth'
 import FooterPage from './components/global/FooterPage'
 
