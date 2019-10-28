@@ -19,7 +19,6 @@ export default {
       .then(response => {
         if (response.status === 200) {
           console.log("1");
-          console.log(response);
         }
       })
       .catch(error => {
